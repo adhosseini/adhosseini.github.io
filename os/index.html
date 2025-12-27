@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کارگاه سیستم عامل - آموزش اوبونتو</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Vazirmatn', sans-serif; }
+        
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --accent: #6366f1;
+        }
+        
+        .light-theme {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #cbd5e1;
+            --accent: #4f46e5;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .code-block {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .terminal {
+            background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .light-theme .terminal {
+            background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+        }
+        
+        .terminal-header {
+            background: linear-gradient(90deg, #3b3b3b 0%, #2d2d2d 100%);
+        }
+        
+        .light-theme .terminal-header {
+            background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 100%);
+        }
+        
+        .card-bg {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+        
+        .sidebar-bg {
+            background-color: var(--bg-secondary);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .light-theme .card-hover:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Theme Switch */
+        .theme-switch {
+            width: 60px;
+            height: 30px;
+            background: linear-gradient(135deg, #1e3a5f, #0d1b2a);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .light-theme .theme-switch {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+        
+        .theme-switch::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .light-theme .theme-switch::before {
+            left: 33px;
+        }
+        
+        .theme-switch .moon, .theme-switch .sun {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+        
+        .theme-switch .moon {
+            right: 8px;
+            color: #fbbf24;
+        }
+        
+        .theme-switch .sun {
+            left: 8px;
+            color: #fff;
+            opacity: 0;
+        }
+        
+        .light-theme .theme-switch .moon {
+            opacity: 0;
+        }
+        
+        .light-theme .theme-switch .sun {
+            opacity: 1;
+        }
+        
+        /* Tree View */
+        .tree-view {
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .tree-line {
+            border-left: 2px solid var(--border-color);
+            margin-left: 12px;
+            padding-left: 20px;
+        }
+        
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 12px;
+            width: 16px;
+            height: 2px;
+            background: var(--border-color);
+        }
+        
+        .tree-node {
+            position: relative;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        .animate-slideIn {
+            animation: slideIn 0.4s ease-out forwards;
+        }
+        
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        
+        .copy-btn {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .command-card:hover .copy-btn {
+            opacity: 1;
+        }
+        
+        /* Output simulation */
+        .output-line {
+            animation: typewriter 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes typewriter {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Tab styles */
+        .tab-active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .example-tab {
+            transition: all 0.2s;
+        }
+        
+        .example-tab:hover {
+            background: var(--bg-tertiary);
+        }
+    </style>
+</head>
+<body class="min-h-screen transition-colors duration-300">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 border-b backdrop-blur-lg" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fab fa-ubuntu text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">
+                            کارگاه سیستم عامل
+                        </h1>
+                        <p class="text-xs" style="color: var(--text-secondary);">Ubuntu Cheatsheet</p>
+                    </div>
+                </div>
+                
+                <!-- Search -->
+                <div class="relative w-full md:w-96">
+                    <input type="text" id="searchInput" placeholder="جستجوی دستور..." 
+                        class="w-full rounded-xl py-3 px-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                        style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary);">
+                    <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2" style="color: var(--text-secondary);"></i>
+                    <kbd class="hidden md:block absolute left-3 top-1/2 -translate-y-1/2 px-2 py-1 rounded text-xs" style="background-color: var(--bg-primary); color: var(--text-secondary);">Ctrl+K</kbd>
+                </div>
+                
+                <!-- Theme Switch & Stats -->
+                <div class="flex items-center gap-6">
+                    <div class="theme-switch" id="themeSwitch" title="تغییر تم">
+                        <i class="fas fa-moon moon"></i>
+                        <i class="fas fa-sun sun"></i>
+                    </div>
+                    
+                    <div class="hidden lg:flex items-center gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-indigo-400" id="totalCommands">0</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">دستور</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-emerald-400" id="totalCategories">0</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">دسته‌بندی</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- View Toggle -->
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-center gap-2">
+            <button id="listViewBtn" class="px-6 py-2 rounded-lg font-medium transition-all tab-active">
+                <i class="fas fa-list ml-2"></i>نمایش لیستی
+            </button>
+            <button id="treeViewBtn" class="px-6 py-2 rounded-lg font-medium transition-all" style="background-color: var(--bg-tertiary);">
+                <i class="fas fa-sitemap ml-2"></i>نمایش درختی
+            </button>
+        </div>
+    </div>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar fixed lg:sticky top-20 right-0 w-72 h-[calc(100vh-5rem)] border-l overflow-y-auto transform translate-x-full lg:translate-x-0 transition-transform z-40 sidebar-bg" style="border-color: var(--border-color);">
+            <div class="p-4">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-layer-group text-indigo-400"></i>
+                    دسته‌بندی‌ها
+                </h2>
+                <nav id="categoryNav" class="space-y-2"></nav>
+            </div>
+        </aside>
+
+        <!-- Mobile Menu Button -->
+        <button id="menuToggle" class="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-indigo-700 transition-colors">
+            <i class="fas fa-bars text-xl text-white"></i>
+        </button>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8 min-h-screen">
+            <div class="max-w-6xl mx-auto">
+                <!-- Welcome Section -->
+                <section id="welcome" class="mb-12 animate-fadeInUp">
+                    <div class="rounded-3xl p-8 border" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border-color: var(--border-color);">
+                        <div class="flex flex-col md:flex-row items-center gap-6">
+                            <div class="w-24 h-24 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-xl">
+                                <i class="fab fa-linux text-5xl text-white"></i>
+                            </div>
+                            <div class="text-center md:text-right">
+                                <h2 class="text-3xl md:text-4xl font-black mb-3">به کارگاه سیستم عامل خوش آمدید!</h2>
+                                <p style="color: var(--text-secondary);" class="text-lg">راهنمای جامع دستورات لینوکس اوبونتو با مثال‌های کاربردی</p>
+                                <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+                                    <span class="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-full text-sm flex items-center gap-2">
+                                        <i class="fas fa-check-circle"></i> مثال‌های متعدد
+                                    </span>
+                                    <span class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-2">
+                                        <i class="fas fa-terminal"></i> خروجی واقعی
+                                    </span>
+                                    <span class="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full text-sm flex items-center gap-2">
+                                        <i class="fas fa-sitemap"></i> نمایش درختی
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tree View Container -->
+                <div id="treeViewContainer" class="hidden mb-12"></div>
+
+                <!-- List View Container -->
+                <div id="contentContainer"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 z-50">
+        <i class="fas fa-check-circle"></i>
+        <span>دستور کپی شد!</span>
+    </div>
+
+    <!-- Scroll to Top -->
+    <button id="scrollTop" class="fixed bottom-6 left-6 w-12 h-12 rounded-full shadow-lg items-center justify-center z-40 transition-colors hidden" style="background-color: var(--bg-tertiary);">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+<script>
+// ===== JSON Configuration =====
+const courseData = {
+    "title": "کارگاه سیستم عامل - اوبونتو",
+    "categories": [
+        {
+            "id": "system",
+            "title": "اطلاعات سیستم",
+            "icon": "fa-desktop",
+            "color": "from-blue-500 to-cyan-500",
+            "description": "دستورات مربوط به اطلاعات سیستم",
+            "commands": [
+                {
+                    "command": "uname -a",
+                    "description": "نمایش اطلاعات کامل سیستم شامل نام کرنل، نسخه، معماری و تاریخ",
+                    "examples": [
+                        {
+                            "title": "نمایش تمام اطلاعات",
+                            "code": "uname -a",
+                            "output": "Linux ubuntu-server 5.15.0-91-generic #101-Ubuntu SMP x86_64 GNU/Linux",
+                            "explanation": "نام OS، هاست، نسخه کرنل، تاریخ کامپایل، معماری پردازنده"
+                        },
+                        {
+                            "title": "فقط نام کرنل",
+                            "code": "uname -s",
+                            "output": "Linux",
+                            "explanation": "فقط نام سیستم عامل (Linux) را نمایش می‌دهد"
+                        },
+                        {
+                            "title": "معماری پردازنده",
+                            "code": "uname -m",
+                            "output": "x86_64",
+                            "explanation": "معماری سخت‌افزار: x86_64 یعنی 64 بیتی"
+                        }
+                    ],
+                    "tip": "پرچم -a مخفف all است و تمام اطلاعات را یکجا نشان می‌دهد"
+                },
+                {
+                    "command": "uptime",
+                    "description": "مدت زمان روشن بودن سیستم و میانگین بار",
+                    "examples": [
+                        {
+                            "title": "نمایش uptime کامل",
+                            "code": "uptime",
+                            "output": " 14:32:15 up 45 days,  3:22,  2 users,  load average: 0.15, 0.10, 0.05",
+                            "explanation": "ساعت فعلی، مدت روشن بودن، تعداد کاربران آنلاین، میانگین بار 1/5/15 دقیقه"
+                        },
+                        {
+                            "title": "فرمت خوانا",
+                            "code": "uptime -p",
+                            "output": "up 45 days, 3 hours, 22 minutes",
+                            "explanation": "نمایش ساده‌تر و خواناتر مدت زمان"
+                        }
+                    ],
+                    "tip": "load average نشان‌دهنده فشار روی CPU است. اگر از تعداد هسته‌ها بیشتر باشد یعنی سیستم تحت فشار است"
+                },
+                {
+                    "command": "hostname",
+                    "description": "نمایش یا تنظیم نام میزبان سیستم",
+                    "examples": [
+                        {
+                            "title": "نام سیستم",
+                            "code": "hostname",
+                            "output": "ubuntu-server",
+                            "explanation": "نام hostname فعلی سیستم"
+                        },
+                        {
+                            "title": "آدرس IP",
+                            "code": "hostname -I",
+                            "output": "192.168.1.100 10.0.0.5",
+                            "explanation": "تمام آدرس‌های IP تخصیص داده شده به سیستم"
+                        },
+                        {
+                            "title": "FQDN کامل",
+                            "code": "hostname -f",
+                            "output": "ubuntu-server.localdomain",
+                            "explanation": "نام کامل دامنه (Fully Qualified Domain Name)"
+                        }
+                    ],
+                    "tip": "برای تغییر دائمی hostname از hostnamectl set-hostname استفاده کنید"
+                },
+                {
+                    "command": "date",
+                    "description": "نمایش یا تنظیم تاریخ و زمان سیستم",
+                    "examples": [
+                        {
+                            "title": "تاریخ و ساعت فعلی",
+                            "code": "date",
+                            "output": "Thu Jan 25 14:32:15 UTC 2024",
+                            "explanation": "روز هفته، ماه، روز، ساعت، منطقه زمانی، سال"
+                        },
+                        {
+                            "title": "فرمت سفارشی",
+                            "code": "date '+%Y-%m-%d %H:%M:%S'",
+                            "output": "2024-01-25 14:32:15",
+                            "explanation": "فرمت ISO: سال-ماه-روز ساعت:دقیقه:ثانیه"
+                        },
+                        {
+                            "title": "فقط سال",
+                            "code": "date +%Y",
+                            "output": "2024",
+                            "explanation": "%Y سال 4 رقمی، %y سال 2 رقمی"
+                        }
+                    ],
+                    "tip": "برای تنظیم ساعت از timedatectl یا ntpdate استفاده کنید"
+                },
+                {
+                    "command": "whoami",
+                    "description": "نمایش نام کاربری فعلی که login کرده‌اید",
+                    "examples": [
+                        {
+                            "title": "کاربر فعلی",
+                            "code": "whoami",
+                            "output": "john",
+                            "explanation": "نام کاربری که در حال حاضر با آن کار می‌کنید"
+                        },
+                        {
+                            "title": "بعد از sudo",
+                            "code": "sudo whoami",
+                            "output": "root",
+                            "explanation": "با sudo، دستورات به نام root اجرا می‌شوند"
+                        }
+                    ],
+                    "tip": "معادل دستور id -un است"
+                },
+                {
+                    "command": "w",
+                    "description": "نمایش کاربران آنلاین و فعالیت آن‌ها",
+                    "examples": [
+                        {
+                            "title": "کاربران آنلاین",
+                            "code": "w",
+                            "output": " 14:32:15 up 45 days,  3:22,  2 users,  load average: 0.15, 0.10, 0.05\nUSER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT\njohn     pts/0    192.168.1.50     10:00    0.00s  0.05s  0.00s w\nroot     pts/1    192.168.1.51     09:30    1:30   0.10s  0.02s top",
+                            "explanation": "لیست کاربران با TTY، IP، زمان ورود، مدت بیکاری و دستور در حال اجرا"
+                        }
+                    ],
+                    "tip": "بهتر از who است چون اطلاعات بیشتری نشان می‌دهد"
+                }
+            ]
+        },
+        {
+            "id": "hardware",
+            "title": "اطلاعات سخت‌افزار",
+            "icon": "fa-microchip",
+            "color": "from-emerald-500 to-teal-500",
+            "description": "مانیتورینگ و اطلاعات سخت‌افزاری",
+            "commands": [
+                {
+                    "command": "lscpu",
+                    "description": "نمایش اطلاعات کامل پردازنده (CPU)",
+                    "examples": [
+                        {
+                            "title": "اطلاعات CPU",
+                            "code": "lscpu",
+                            "output": "Architecture:            x86_64\nCPU(s):                  8\nThread(s) per core:      2\nCore(s) per socket:      4\nModel name:              Intel(R) Core(TM) i7-10700 @ 2.90GHz\nCPU MHz:                 2900.000\nL3 cache:                16384K",
+                            "explanation": "معماری، تعداد هسته/رشته، مدل، فرکانس و کش"
+                        },
+                        {
+                            "title": "فقط تعداد هسته‌ها",
+                            "code": "nproc",
+                            "output": "8",
+                            "explanation": "تعداد پردازنده‌های قابل استفاده"
+                        }
+                    ],
+                    "tip": "برای اطلاعات خام از cat /proc/cpuinfo استفاده کنید"
+                },
+                {
+                    "command": "free -h",
+                    "description": "نمایش وضعیت حافظه RAM به صورت خوانا",
+                    "examples": [
+                        {
+                            "title": "وضعیت RAM",
+                            "code": "free -h",
+                            "output": "              total        used        free      shared  buff/cache   available\nMem:           15Gi       4.2Gi       8.1Gi       256Mi       3.1Gi        10Gi\nSwap:          4.0Gi          0B       4.0Gi",
+                            "explanation": "total: کل حافظه، used: استفاده شده، free: آزاد، available: قابل تخصیص"
+                        },
+                        {
+                            "title": "به مگابایت",
+                            "code": "free -m",
+                            "output": "              total        used        free\nMem:          16384        4300        8300",
+                            "explanation": "نمایش بر حسب مگابایت"
+                        }
+                    ],
+                    "tip": "available مهم‌تر از free است چون buff/cache قابل آزادسازی است"
+                },
+                {
+                    "command": "df -h",
+                    "description": "نمایش فضای دیسک‌ها به صورت خوانا",
+                    "examples": [
+                        {
+                            "title": "فضای دیسک‌ها",
+                            "code": "df -h",
+                            "output": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   45G   55G  45% /\n/dev/sdb1       500G  200G  300G  40% /data\ntmpfs           7.8G     0  7.8G   0% /dev/shm",
+                            "explanation": "نام دستگاه، حجم کل، استفاده شده، موجود، درصد و نقطه اتصال"
+                        },
+                        {
+                            "title": "فقط نوع ext4",
+                            "code": "df -h -t ext4",
+                            "output": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   45G   55G  45% /",
+                            "explanation": "فیلتر بر اساس نوع فایل سیستم"
+                        }
+                    ],
+                    "tip": "با -T نوع فایل سیستم هم نمایش داده می‌شود"
+                },
+                {
+                    "command": "lsblk",
+                    "description": "لیست دستگاه‌های بلوک (دیسک‌ها و پارتیشن‌ها)",
+                    "examples": [
+                        {
+                            "title": "لیست دیسک‌ها",
+                            "code": "lsblk",
+                            "output": "NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT\nsda      8:0    0   100G  0 disk \n├─sda1   8:1    0    95G  0 part /\n├─sda2   8:2    0     1K  0 part \n└─sda5   8:5    0     5G  0 part [SWAP]\nsdb      8:16   0   500G  0 disk \n└─sdb1   8:17   0   500G  0 part /data",
+                            "explanation": "ساختار درختی دیسک‌ها، پارتیشن‌ها و نقاط mount"
+                        },
+                        {
+                            "title": "با جزئیات بیشتر",
+                            "code": "lsblk -f",
+                            "output": "NAME   FSTYPE LABEL UUID                                 MOUNTPOINT\nsda1   ext4         a1b2c3d4-...                         /",
+                            "explanation": "نوع فایل سیستم، برچسب و UUID"
+                        }
+                    ],
+                    "tip": "برای دیدن UUID پارتیشن‌ها از blkid استفاده کنید"
+                },
+                {
+                    "command": "du -sh",
+                    "description": "نمایش حجم یک پوشه یا فایل",
+                    "examples": [
+                        {
+                            "title": "حجم پوشه home",
+                            "code": "du -sh /home",
+                            "output": "25G\t/home",
+                            "explanation": "-s خلاصه، -h خوانا (human readable)"
+                        },
+                        {
+                            "title": "حجم زیرپوشه‌ها",
+                            "code": "du -h --max-depth=1 /var",
+                            "output": "1.2G\t/var/log\n500M\t/var/cache\n200M\t/var/lib\n1.9G\t/var",
+                            "explanation": "حجم هر زیرپوشه تا عمق 1"
+                        },
+                        {
+                            "title": "بزرگترین پوشه‌ها",
+                            "code": "du -h /var | sort -rh | head -5",
+                            "output": "1.9G\t/var\n1.2G\t/var/log\n500M\t/var/cache",
+                            "explanation": "مرتب شده از بزرگ به کوچک، 5 تای اول"
+                        }
+                    ],
+                    "tip": "برای پیدا کردن فایل‌های حجیم از find با -size استفاده کنید"
+                }
+            ]
+        },
+        {
+            "id": "files",
+            "title": "مدیریت فایل‌ها",
+            "icon": "fa-folder-open",
+            "color": "from-amber-500 to-orange-500",
+            "description": "کار با فایل‌ها و پوشه‌ها",
+            "commands": [
+                {
+                    "command": "ls",
+                    "description": "لیست فایل‌ها و پوشه‌ها",
+                    "examples": [
+                        {
+                            "title": "لیست ساده",
+                            "code": "ls",
+                            "output": "Desktop  Documents  Downloads  Pictures  Videos",
+                            "explanation": "لیست فایل‌ها و پوشه‌های مسیر فعلی"
+                        },
+                        {
+                            "title": "لیست کامل با جزئیات",
+                            "code": "ls -la",
+                            "output": "total 32\ndrwxr-xr-x  5 john john 4096 Jan 25 10:00 .\ndrwxr-xr-x  3 root root 4096 Jan 20 09:00 ..\n-rw-r--r--  1 john john  220 Jan 20 09:00 .bashrc\ndrwxr-xr-x  2 john john 4096 Jan 25 10:00 Documents\n-rw-r--r--  1 john john 1024 Jan 25 09:30 file.txt",
+                            "explanation": "مجوزها، مالک، گروه، حجم، تاریخ تغییر و نام"
+                        },
+                        {
+                            "title": "با حجم خوانا",
+                            "code": "ls -lh",
+                            "output": "-rw-r--r-- 1 john john 1.5K Jan 25 file.txt\n-rw-r--r-- 1 john john  25M Jan 24 video.mp4",
+                            "explanation": "K, M, G به جای بایت"
+                        },
+                        {
+                            "title": "مرتب بر اساس زمان",
+                            "code": "ls -lt",
+                            "output": "-rw-r--r-- 1 john john 1024 Jan 25 newest.txt\n-rw-r--r-- 1 john john 2048 Jan 24 older.txt",
+                            "explanation": "جدیدترین‌ها اول"
+                        }
+                    ],
+                    "tip": "-a فایل‌های مخفی (با نقطه شروع)، -l جزئیات، -h حجم خوانا، -t مرتب بر زمان"
+                },
+                {
+                    "command": "cd",
+                    "description": "تغییر مسیر (Change Directory)",
+                    "examples": [
+                        {
+                            "title": "رفتن به پوشه",
+                            "code": "cd /var/log",
+                            "output": "",
+                            "explanation": "تغییر به مسیر /var/log"
+                        },
+                        {
+                            "title": "برگشت به home",
+                            "code": "cd ~",
+                            "output": "",
+                            "explanation": "~ یعنی پوشه home کاربر فعلی"
+                        },
+                        {
+                            "title": "یک سطح بالاتر",
+                            "code": "cd ..",
+                            "output": "",
+                            "explanation": ".. یعنی پوشه والد"
+                        },
+                        {
+                            "title": "برگشت به قبلی",
+                            "code": "cd -",
+                            "output": "/var/log",
+                            "explanation": "برگشت به آخرین مسیری که بودید"
+                        }
+                    ],
+                    "tip": "از Tab برای تکمیل خودکار نام پوشه استفاده کنید"
+                },
+                {
+                    "command": "cp",
+                    "description": "کپی فایل یا پوشه",
+                    "examples": [
+                        {
+                            "title": "کپی فایل",
+                            "code": "cp file.txt backup.txt",
+                            "output": "",
+                            "explanation": "کپی file.txt به backup.txt"
+                        },
+                        {
+                            "title": "کپی به پوشه دیگر",
+                            "code": "cp file.txt /home/john/backup/",
+                            "output": "",
+                            "explanation": "کپی با همان نام به پوشه مقصد"
+                        },
+                        {
+                            "title": "کپی پوشه (بازگشتی)",
+                            "code": "cp -r folder/ backup_folder/",
+                            "output": "",
+                            "explanation": "-r برای کپی پوشه با تمام محتویات"
+                        },
+                        {
+                            "title": "حفظ ویژگی‌ها",
+                            "code": "cp -p file.txt backup.txt",
+                            "output": "",
+                            "explanation": "-p مجوزها، مالکیت و زمان را حفظ می‌کند"
+                        }
+                    ],
+                    "tip": "با -i قبل از بازنویسی تأیید می‌گیرد"
+                },
+                {
+                    "command": "mv",
+                    "description": "جابجایی یا تغییر نام فایل/پوشه",
+                    "examples": [
+                        {
+                            "title": "تغییر نام",
+                            "code": "mv old_name.txt new_name.txt",
+                            "output": "",
+                            "explanation": "تغییر نام فایل"
+                        },
+                        {
+                            "title": "انتقال به پوشه",
+                            "code": "mv file.txt /home/john/Documents/",
+                            "output": "",
+                            "explanation": "انتقال فایل به پوشه دیگر"
+                        },
+                        {
+                            "title": "انتقال چند فایل",
+                            "code": "mv *.txt Documents/",
+                            "output": "",
+                            "explanation": "انتقال تمام فایل‌های txt"
+                        }
+                    ],
+                    "tip": "mv هم برای تغییر نام و هم انتقال استفاده می‌شود"
+                },
+                {
+                    "command": "rm",
+                    "description": "حذف فایل یا پوشه",
+                    "examples": [
+                        {
+                            "title": "حذف فایل",
+                            "code": "rm file.txt",
+                            "output": "",
+                            "explanation": "حذف یک فایل"
+                        },
+                        {
+                            "title": "حذف با تأیید",
+                            "code": "rm -i file.txt",
+                            "output": "rm: remove regular file 'file.txt'? y",
+                            "explanation": "قبل از حذف تأیید می‌گیرد"
+                        },
+                        {
+                            "title": "حذف پوشه",
+                            "code": "rm -r folder/",
+                            "output": "",
+                            "explanation": "حذف پوشه و تمام محتویات"
+                        },
+                        {
+                            "title": "حذف اجباری",
+                            "code": "rm -rf folder/",
+                            "output": "",
+                            "explanation": "⚠️ خطرناک! بدون تأیید همه چیز را حذف می‌کند"
+                        }
+                    ],
+                    "tip": "⚠️ هرگز rm -rf / را اجرا نکنید! کل سیستم پاک می‌شود"
+                },
+                {
+                    "command": "mkdir",
+                    "description": "ایجاد پوشه جدید",
+                    "examples": [
+                        {
+                            "title": "ایجاد پوشه",
+                            "code": "mkdir new_folder",
+                            "output": "",
+                            "explanation": "ایجاد یک پوشه"
+                        },
+                        {
+                            "title": "ایجاد تودرتو",
+                            "code": "mkdir -p parent/child/grandchild",
+                            "output": "",
+                            "explanation": "-p پوشه‌های والد را هم می‌سازد"
+                        },
+                        {
+                            "title": "چند پوشه همزمان",
+                            "code": "mkdir dir1 dir2 dir3",
+                            "output": "",
+                            "explanation": "ایجاد چند پوشه با یک دستور"
+                        }
+                    ],
+                    "tip": "بدون -p اگر پوشه والد نباشد خطا می‌دهد"
+                },
+                {
+                    "command": "touch",
+                    "description": "ایجاد فایل خالی یا بروزرسانی زمان",
+                    "examples": [
+                        {
+                            "title": "ایجاد فایل خالی",
+                            "code": "touch newfile.txt",
+                            "output": "",
+                            "explanation": "اگر فایل نباشد، ایجاد می‌شود"
+                        },
+                        {
+                            "title": "چند فایل همزمان",
+                            "code": "touch file1.txt file2.txt file3.txt",
+                            "output": "",
+                            "explanation": "ایجاد چند فایل با یک دستور"
+                        },
+                        {
+                            "title": "بروزرسانی زمان",
+                            "code": "touch existing_file.txt",
+                            "output": "",
+                            "explanation": "اگر فایل باشد، زمان تغییر بروز می‌شود"
+                        }
+                    ],
+                    "tip": "برای ایجاد فایل با محتوا از echo یا cat استفاده کنید"
+                },
+                {
+                    "command": "cat",
+                    "description": "نمایش محتوای فایل",
+                    "examples": [
+                        {
+                            "title": "نمایش فایل",
+                            "code": "cat file.txt",
+                            "output": "This is line 1\nThis is line 2\nThis is line 3",
+                            "explanation": "نمایش کل محتوای فایل"
+                        },
+                        {
+                            "title": "با شماره خط",
+                            "code": "cat -n file.txt",
+                            "output": "     1\tThis is line 1\n     2\tThis is line 2\n     3\tThis is line 3",
+                            "explanation": "شماره خط در ابتدای هر خط"
+                        },
+                        {
+                            "title": "ترکیب فایل‌ها",
+                            "code": "cat file1.txt file2.txt > combined.txt",
+                            "output": "",
+                            "explanation": "ترکیب دو فایل در یک فایل جدید"
+                        }
+                    ],
+                    "tip": "برای فایل‌های بزرگ از less یا more استفاده کنید"
+                }
+            ]
+        },
+        {
+            "id": "search",
+            "title": "جستجو",
+            "icon": "fa-search",
+            "color": "from-pink-500 to-rose-500",
+            "description": "جستجوی فایل‌ها و متن",
+            "commands": [
+                {
+                    "command": "find",
+                    "description": "جستجوی فایل‌ها بر اساس معیارهای مختلف",
+                    "examples": [
+                        {
+                            "title": "جستجو با نام",
+                            "code": "find /home -name '*.txt'",
+                            "output": "/home/john/documents/notes.txt\n/home/john/readme.txt",
+                            "explanation": "پیدا کردن تمام فایل‌های txt در /home"
+                        },
+                        {
+                            "title": "بدون حساسیت به حروف",
+                            "code": "find . -iname 'readme*'",
+                            "output": "./README.md\n./readme.txt\n./Readme.doc",
+                            "explanation": "-iname بزرگ/کوچک بودن حروف مهم نیست"
+                        },
+                        {
+                            "title": "جستجوی پوشه‌ها",
+                            "code": "find /var -type d -name 'log*'",
+                            "output": "/var/log\n/var/log/journal",
+                            "explanation": "-type d فقط پوشه‌ها"
+                        },
+                        {
+                            "title": "فایل‌های بزرگ",
+                            "code": "find /home -size +100M",
+                            "output": "/home/john/videos/movie.mp4\n/home/john/backup.tar.gz",
+                            "explanation": "فایل‌های بیش از 100 مگابایت"
+                        },
+                        {
+                            "title": "تغییر یافته اخیر",
+                            "code": "find . -mtime -7",
+                            "output": "./project/app.py\n./notes.txt",
+                            "explanation": "فایل‌های تغییر یافته در 7 روز اخیر"
+                        }
+                    ],
+                    "tip": "از -exec برای اجرای دستور روی نتایج استفاده کنید"
+                },
+                {
+                    "command": "grep",
+                    "description": "جستجوی الگو در فایل‌ها",
+                    "examples": [
+                        {
+                            "title": "جستجو در فایل",
+                            "code": "grep 'error' logfile.txt",
+                            "output": "2024-01-25 10:30 ERROR: Connection failed\n2024-01-25 11:45 ERROR: Timeout occurred",
+                            "explanation": "خطوط حاوی کلمه error"
+                        },
+                        {
+                            "title": "بدون حساسیت حروف",
+                            "code": "grep -i 'ERROR' logfile.txt",
+                            "output": "ERROR: Connection failed\nerror: timeout\nError: Invalid input",
+                            "explanation": "-i برای case-insensitive"
+                        },
+                        {
+                            "title": "جستجوی بازگشتی",
+                            "code": "grep -r 'TODO' /home/john/project/",
+                            "output": "/home/john/project/app.py:# TODO: Fix this\n/home/john/project/utils.py:# TODO: Optimize",
+                            "explanation": "جستجو در تمام فایل‌های زیرپوشه‌ها"
+                        },
+                        {
+                            "title": "با شماره خط",
+                            "code": "grep -n 'function' script.py",
+                            "output": "15:def function_one():\n42:def function_two():\n89:def main_function():",
+                            "explanation": "-n شماره خط را نشان می‌دهد"
+                        },
+                        {
+                            "title": "فقط تعداد",
+                            "code": "grep -c 'error' logfile.txt",
+                            "output": "25",
+                            "explanation": "تعداد خطوط مطابق"
+                        }
+                    ],
+                    "tip": "از regex برای الگوهای پیچیده استفاده کنید: grep -E 'pattern'"
+                },
+                {
+                    "command": "locate",
+                    "description": "جستجوی سریع با دیتابیس از پیش ساخته شده",
+                    "examples": [
+                        {
+                            "title": "جستجوی ساده",
+                            "code": "locate nginx.conf",
+                            "output": "/etc/nginx/nginx.conf\n/usr/share/doc/nginx/nginx.conf.example",
+                            "explanation": "همه مسیرهای حاوی nginx.conf"
+                        },
+                        {
+                            "title": "بروزرسانی دیتابیس",
+                            "code": "sudo updatedb",
+                            "output": "",
+                            "explanation": "قبل از جستجو دیتابیس را بروز کنید"
+                        }
+                    ],
+                    "tip": "locate خیلی سریع‌تر از find است اما ممکن است به‌روز نباشد"
+                },
+                {
+                    "command": "which",
+                    "description": "پیدا کردن مسیر فایل اجرایی",
+                    "examples": [
+                        {
+                            "title": "مسیر python",
+                            "code": "which python3",
+                            "output": "/usr/bin/python3",
+                            "explanation": "مسیر اجرایی python3"
+                        },
+                        {
+                            "title": "همه نسخه‌ها",
+                            "code": "which -a python",
+                            "output": "/usr/bin/python\n/usr/local/bin/python",
+                            "explanation": "-a همه مسیرها را نشان می‌دهد"
+                        }
+                    ],
+                    "tip": "فقط در مسیرهای PATH جستجو می‌کند"
+                }
+            ]
+        },
+        {
+            "id": "permissions",
+            "title": "مجوزها و مالکیت",
+            "icon": "fa-lock",
+            "color": "from-red-500 to-rose-600",
+            "description": "مدیریت دسترسی‌ها",
+            "commands": [
+                {
+                    "command": "chmod",
+                    "description": "تغییر مجوزهای فایل یا پوشه",
+                    "examples": [
+                        {
+                            "title": "مجوز عددی",
+                            "code": "chmod 755 script.sh",
+                            "output": "",
+                            "explanation": "7=rwx برای مالک، 5=rx برای گروه و دیگران"
+                        },
+                        {
+                            "title": "افزودن مجوز اجرا",
+                            "code": "chmod +x script.sh",
+                            "output": "",
+                            "explanation": "افزودن مجوز execute برای همه"
+                        },
+                        {
+                            "title": "حذف مجوز نوشتن",
+                            "code": "chmod -w file.txt",
+                            "output": "",
+                            "explanation": "حذف مجوز write"
+                        },
+                        {
+                            "title": "مجوز نمادین",
+                            "code": "chmod u+rwx,g+rx,o+r file.txt",
+                            "output": "",
+                            "explanation": "u=user, g=group, o=others"
+                        },
+                        {
+                            "title": "بازگشتی برای پوشه",
+                            "code": "chmod -R 755 /var/www/",
+                            "output": "",
+                            "explanation": "-R روی همه فایل‌ها و زیرپوشه‌ها"
+                        }
+                    ],
+                    "tip": "جدول: 4=read, 2=write, 1=execute → 7=4+2+1=rwx"
+                },
+                {
+                    "command": "chown",
+                    "description": "تغییر مالک و گروه فایل",
+                    "examples": [
+                        {
+                            "title": "تغییر مالک",
+                            "code": "chown john file.txt",
+                            "output": "",
+                            "explanation": "تغییر مالک به john"
+                        },
+                        {
+                            "title": "مالک و گروه",
+                            "code": "chown john:developers file.txt",
+                            "output": "",
+                            "explanation": "تغییر مالک و گروه همزمان"
+                        },
+                        {
+                            "title": "فقط گروه",
+                            "code": "chown :www-data file.txt",
+                            "output": "",
+                            "explanation": "فقط گروه تغییر می‌کند"
+                        },
+                        {
+                            "title": "بازگشتی",
+                            "code": "chown -R www-data:www-data /var/www/",
+                            "output": "",
+                            "explanation": "تغییر مالکیت کل پوشه"
+                        }
+                    ],
+                    "tip": "معمولاً نیاز به sudo دارد"
+                }
+            ]
+        },
+        {
+            "id": "network",
+            "title": "شبکه",
+            "icon": "fa-network-wired",
+            "color": "from-cyan-500 to-blue-500",
+            "description": "دستورات شبکه و اینترنت",
+            "commands": [
+                {
+                    "command": "ip",
+                    "description": "مدیریت شبکه (جایگزین ifconfig)",
+                    "examples": [
+                        {
+                            "title": "آدرس‌های IP",
+                            "code": "ip addr show",
+                            "output": "1: lo: <LOOPBACK,UP> mtu 65536\n    inet 127.0.0.1/8 scope host lo\n2: eth0: <BROADCAST,UP> mtu 1500\n    inet 192.168.1.100/24 brd 192.168.1.255",
+                            "explanation": "لیست اینترفیس‌ها و آدرس‌های IP"
+                        },
+                        {
+                            "title": "اینترفیس‌های شبکه",
+                            "code": "ip link show",
+                            "output": "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500",
+                            "explanation": "وضعیت لینک‌های شبکه"
+                        },
+                        {
+                            "title": "جدول مسیریابی",
+                            "code": "ip route show",
+                            "output": "default via 192.168.1.1 dev eth0\n192.168.1.0/24 dev eth0 proto kernel scope link",
+                            "explanation": "مسیرهای شبکه و gateway پیش‌فرض"
+                        }
+                    ],
+                    "tip": "ip a مخفف ip addr show است"
+                },
+                {
+                    "command": "ping",
+                    "description": "تست اتصال به یک میزبان",
+                    "examples": [
+                        {
+                            "title": "پینگ ساده",
+                            "code": "ping google.com",
+                            "output": "PING google.com (142.250.185.78) 56(84) bytes of data.\n64 bytes from fra16s51-in-f14.1e100.net: icmp_seq=1 ttl=117 time=12.5 ms\n64 bytes from fra16s51-in-f14.1e100.net: icmp_seq=2 ttl=117 time=11.8 ms",
+                            "explanation": "ارسال ICMP و دریافت پاسخ. Ctrl+C برای توقف"
+                        },
+                        {
+                            "title": "تعداد محدود",
+                            "code": "ping -c 4 google.com",
+                            "output": "4 packets transmitted, 4 received, 0% packet loss, time 3004ms\nrtt min/avg/max/mdev = 11.234/12.156/13.456/0.789 ms",
+                            "explanation": "-c 4 فقط 4 پکت ارسال می‌کند"
+                        }
+                    ],
+                    "tip": "اگر پاسخ نگرفتید، فایروال یا مشکل شبکه بررسی کنید"
+                },
+                {
+                    "command": "curl",
+                    "description": "انتقال داده از/به سرور",
+                    "examples": [
+                        {
+                            "title": "دریافت صفحه وب",
+                            "code": "curl https://example.com",
+                            "output": "<!DOCTYPE html>\n<html>\n<head><title>Example Domain</title></head>...",
+                            "explanation": "دریافت و نمایش محتوای URL"
+                        },
+                        {
+                            "title": "دانلود فایل",
+                            "code": "curl -O https://example.com/file.zip",
+                            "output": "  % Total    % Received  Time    Current\n 100  1024  100  1024    0     0   5000      0 --:--:-- --:--:--",
+                            "explanation": "-O ذخیره با نام اصلی فایل"
+                        },
+                        {
+                            "title": "هدرهای HTTP",
+                            "code": "curl -I https://example.com",
+                            "output": "HTTP/2 200\ncontent-type: text/html\ncontent-length: 1256",
+                            "explanation": "-I فقط هدرها را نمایش می‌دهد"
+                        }
+                    ],
+                    "tip": "از -s برای حالت silent استفاده کنید"
+                },
+                {
+                    "command": "wget",
+                    "description": "دانلود فایل از اینترنت",
+                    "examples": [
+                        {
+                            "title": "دانلود ساده",
+                            "code": "wget https://example.com/file.zip",
+                            "output": "--2024-01-25 14:30:00--  https://example.com/file.zip\nSaving to: 'file.zip'\nfile.zip          100%[===================>]   5.2M  1.50MB/s    in 3.5s",
+                            "explanation": "دانلود و ذخیره فایل"
+                        },
+                        {
+                            "title": "با نام دلخواه",
+                            "code": "wget -O myfile.zip https://example.com/file.zip",
+                            "output": "",
+                            "explanation": "-O نام فایل خروجی"
+                        },
+                        {
+                            "title": "ادامه دانلود قطع شده",
+                            "code": "wget -c https://example.com/largefile.iso",
+                            "output": "",
+                            "explanation": "-c برای resume دانلود ناقص"
+                        }
+                    ],
+                    "tip": "wget برای دانلود مناسب‌تر و curl برای API ها"
+                },
+                {
+                    "command": "ssh",
+                    "description": "اتصال امن به سرور راه دور",
+                    "examples": [
+                        {
+                            "title": "اتصال ساده",
+                            "code": "ssh user@192.168.1.100",
+                            "output": "user@192.168.1.100's password: \nWelcome to Ubuntu 22.04 LTS\nuser@server:~$",
+                            "explanation": "اتصال به سرور با نام کاربری"
+                        },
+                        {
+                            "title": "با پورت خاص",
+                            "code": "ssh -p 2222 user@server.com",
+                            "output": "",
+                            "explanation": "-p برای پورت غیر پیش‌فرض (22)"
+                        },
+                        {
+                            "title": "با کلید خصوصی",
+                            "code": "ssh -i ~/.ssh/mykey.pem user@server.com",
+                            "output": "",
+                            "explanation": "-i مسیر فایل کلید"
+                        }
+                    ],
+                    "tip": "از ssh-keygen برای ساخت کلید استفاده کنید"
+                }
+            ]
+        },
+        {
+            "id": "packages",
+            "title": "مدیریت پکیج‌ها",
+            "icon": "fa-box",
+            "color": "from-indigo-500 to-violet-500",
+            "description": "نصب و مدیریت نرم‌افزارها با APT",
+            "commands": [
+                {
+                    "command": "apt update",
+                    "description": "بروزرسانی لیست پکیج‌ها",
+                    "examples": [
+                        {
+                            "title": "بروزرسانی لیست",
+                            "code": "sudo apt update",
+                            "output": "Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease\nGet:2 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [119 kB]\nFetched 450 kB in 2s (225 kB/s)\nReading package lists... Done\n15 packages can be upgraded.",
+                            "explanation": "دریافت لیست جدید پکیج‌ها از مخازن"
+                        }
+                    ],
+                    "tip": "همیشه قبل از نصب یا ارتقا اجرا کنید"
+                },
+                {
+                    "command": "apt upgrade",
+                    "description": "ارتقای پکیج‌های نصب شده",
+                    "examples": [
+                        {
+                            "title": "ارتقای همه",
+                            "code": "sudo apt upgrade",
+                            "output": "Reading package lists... Done\nThe following packages will be upgraded:\n  nginx openssl\n2 upgraded, 0 newly installed, 0 to remove.\nDo you want to continue? [Y/n]",
+                            "explanation": "ارتقای پکیج‌های موجود به نسخه جدید"
+                        },
+                        {
+                            "title": "بدون تأیید",
+                            "code": "sudo apt upgrade -y",
+                            "output": "",
+                            "explanation": "-y تأیید خودکار"
+                        }
+                    ],
+                    "tip": "apt full-upgrade برای ارتقای کامل با حذف وابستگی‌های قدیمی"
+                },
+                {
+                    "command": "apt install",
+                    "description": "نصب پکیج جدید",
+                    "examples": [
+                        {
+                            "title": "نصب پکیج",
+                            "code": "sudo apt install nginx",
+                            "output": "Reading package lists... Done\nThe following NEW packages will be installed:\n  nginx\n0 upgraded, 1 newly installed, 0 to remove.\nDo you want to continue? [Y/n]",
+                            "explanation": "نصب nginx و وابستگی‌ها"
+                        },
+                        {
+                            "title": "نصب چند پکیج",
+                            "code": "sudo apt install nginx mysql-server php",
+                            "output": "",
+                            "explanation": "نصب چند پکیج همزمان"
+                        }
+                    ],
+                    "tip": "از apt search برای پیدا کردن نام پکیج استفاده کنید"
+                },
+                {
+                    "command": "apt remove",
+                    "description": "حذف پکیج",
+                    "examples": [
+                        {
+                            "title": "حذف پکیج",
+                            "code": "sudo apt remove nginx",
+                            "output": "The following packages will be REMOVED:\n  nginx\nDo you want to continue? [Y/n]",
+                            "explanation": "حذف پکیج (تنظیمات حفظ می‌شود)"
+                        },
+                        {
+                            "title": "حذف کامل",
+                            "code": "sudo apt purge nginx",
+                            "output": "",
+                            "explanation": "purge تنظیمات را هم حذف می‌کند"
+                        },
+                        {
+                            "title": "حذف اضافات",
+                            "code": "sudo apt autoremove",
+                            "output": "The following packages will be REMOVED:\n  libxyz (no longer required)",
+                            "explanation": "حذف وابستگی‌های بلااستفاده"
+                        }
+                    ],
+                    "tip": "apt autoremove فضای دیسک را آزاد می‌کند"
+                },
+                {
+                    "command": "apt search",
+                    "description": "جستجوی پکیج",
+                    "examples": [
+                        {
+                            "title": "جستجو",
+                            "code": "apt search python3",
+                            "output": "python3/jammy 3.10.4 amd64\n  interactive high-level object-oriented language\npython3-pip/jammy 22.0.2 all\n  Python package installer",
+                            "explanation": "لیست پکیج‌های مرتبط"
+                        },
+                        {
+                            "title": "اطلاعات پکیج",
+                            "code": "apt show nginx",
+                            "output": "Package: nginx\nVersion: 1.18.0\nDescription: small, powerful, scalable web server",
+                            "explanation": "جزئیات کامل پکیج"
+                        }
+                    ],
+                    "tip": "apt list --installed لیست پکیج‌های نصب شده"
+                }
+            ]
+        },
+        {
+            "id": "process",
+            "title": "مدیریت پروسه‌ها",
+            "icon": "fa-cogs",
+            "color": "from-teal-500 to-emerald-500",
+            "description": "مانیتورینگ و کنترل پروسه‌ها",
+            "commands": [
+                {
+                    "command": "ps",
+                    "description": "نمایش پروسه‌های در حال اجرا",
+                    "examples": [
+                        {
+                            "title": "پروسه‌های کاربر",
+                            "code": "ps",
+                            "output": "  PID TTY          TIME CMD\n 1234 pts/0    00:00:00 bash\n 5678 pts/0    00:00:00 ps",
+                            "explanation": "پروسه‌های ترمینال فعلی"
+                        },
+                        {
+                            "title": "همه پروسه‌ها",
+                            "code": "ps aux",
+                            "output": "USER       PID %CPU %MEM    VSZ   RSS TTY STAT START   TIME COMMAND\nroot         1  0.0  0.1 169936 11584 ?   Ss   Jan20   0:05 /sbin/init\nwww-data  1234  0.5  2.0 500000 80000 ?   S    10:00   1:30 nginx",
+                            "explanation": "تمام پروسه‌ها با جزئیات کامل"
+                        },
+                        {
+                            "title": "پروسه خاص",
+                            "code": "ps aux | grep nginx",
+                            "output": "www-data  1234  0.5  2.0 500000 80000 ?   S  nginx: master\nwww-data  1235  0.1  1.0 500000 40000 ?   S  nginx: worker",
+                            "explanation": "فیلتر پروسه‌های nginx"
+                        }
+                    ],
+                    "tip": "a=all users, u=user format, x=without tty"
+                },
+                {
+                    "command": "top",
+                    "description": "مانیتور زنده پروسه‌ها",
+                    "examples": [
+                        {
+                            "title": "اجرای top",
+                            "code": "top",
+                            "output": "top - 14:32:15 up 45 days,  3:22,  2 users,  load average: 0.15, 0.10, 0.05\nTasks: 256 total,   1 running, 255 sleeping,   0 stopped,   0 zombie\n%Cpu(s):  2.3 us,  1.0 sy,  0.0 ni, 96.5 id,  0.2 wa,  0.0 hi,  0.0 si\nMiB Mem :  16000.0 total,   8000.0 free,   4000.0 used,   4000.0 buff/cache\n\n  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n 1234 mysql     20   0 2000000 500000  10000 S   5.0  3.1   2:30.45 mysqld\n 5678 www-data  20   0  500000  80000   5000 S   2.0  0.5   0:45.12 nginx",
+                            "explanation": "نمایش زنده CPU, RAM و پروسه‌ها. q برای خروج"
+                        }
+                    ],
+                    "tip": "htop نسخه پیشرفته‌تر با رابط رنگی است"
+                },
+                {
+                    "command": "kill",
+                    "description": "پایان دادن به پروسه",
+                    "examples": [
+                        {
+                            "title": "پایان نرم",
+                            "code": "kill 1234",
+                            "output": "",
+                            "explanation": "ارسال SIGTERM - به پروسه فرصت cleanup می‌دهد"
+                        },
+                        {
+                            "title": "پایان اجباری",
+                            "code": "kill -9 1234",
+                            "output": "",
+                            "explanation": "SIGKILL - بلافاصله پروسه را می‌کشد"
+                        },
+                        {
+                            "title": "با نام پروسه",
+                            "code": "killall nginx",
+                            "output": "",
+                            "explanation": "پایان همه پروسه‌های با این نام"
+                        },
+                        {
+                            "title": "با الگو",
+                            "code": "pkill -f 'python script.py'",
+                            "output": "",
+                            "explanation": "پایان پروسه‌های مطابق الگو"
+                        }
+                    ],
+                    "tip": "اول kill، اگر جواب نداد kill -9"
+                }
+            ]
+        },
+        {
+            "id": "services",
+            "title": "مدیریت سرویس‌ها",
+            "icon": "fa-server",
+            "color": "from-orange-500 to-amber-500",
+            "description": "کنترل سرویس‌های سیستم با systemctl",
+            "commands": [
+                {
+                    "command": "systemctl",
+                    "description": "مدیریت سرویس‌های systemd",
+                    "examples": [
+                        {
+                            "title": "وضعیت سرویس",
+                            "code": "systemctl status nginx",
+                            "output": "● nginx.service - A high performance web server\n   Loaded: loaded (/lib/systemd/system/nginx.service; enabled)\n   Active: active (running) since Mon 2024-01-20 10:00:00 UTC; 5 days ago\n Main PID: 1234 (nginx)\n   CGroup: /system.slice/nginx.service\n           ├─1234 nginx: master process\n           └─1235 nginx: worker process",
+                            "explanation": "وضعیت، PID و اطلاعات سرویس"
+                        },
+                        {
+                            "title": "شروع سرویس",
+                            "code": "sudo systemctl start nginx",
+                            "output": "",
+                            "explanation": "راه‌اندازی سرویس"
+                        },
+                        {
+                            "title": "توقف سرویس",
+                            "code": "sudo systemctl stop nginx",
+                            "output": "",
+                            "explanation": "متوقف کردن سرویس"
+                        },
+                        {
+                            "title": "ری‌استارت",
+                            "code": "sudo systemctl restart nginx",
+                            "output": "",
+                            "explanation": "توقف و شروع مجدد"
+                        },
+                        {
+                            "title": "فعال در استارتاپ",
+                            "code": "sudo systemctl enable nginx",
+                            "output": "Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service",
+                            "explanation": "سرویس بعد از ریبوت خودکار اجرا می‌شود"
+                        },
+                        {
+                            "title": "غیرفعال از استارتاپ",
+                            "code": "sudo systemctl disable nginx",
+                            "output": "",
+                            "explanation": "حذف از استارتاپ خودکار"
+                        },
+                        {
+                            "title": "لیست سرویس‌ها",
+                            "code": "systemctl list-units --type=service --state=running",
+                            "output": "UNIT                    LOAD   ACTIVE SUB     DESCRIPTION\nnginx.service           loaded active running nginx\nmysql.service           loaded active running MySQL\nssh.service             loaded active running OpenSSH",
+                            "explanation": "سرویس‌های در حال اجرا"
+                        }
+                    ],
+                    "tip": "reload تنظیمات را بدون قطع سرویس بارگذاری می‌کند"
+                },
+                {
+                    "command": "journalctl",
+                    "description": "مشاهده لاگ‌های سیستم و سرویس‌ها",
+                    "examples": [
+                        {
+                            "title": "لاگ سرویس",
+                            "code": "journalctl -u nginx",
+                            "output": "Jan 25 10:00:00 server nginx[1234]: Starting nginx...\nJan 25 10:00:01 server nginx[1234]: nginx started successfully",
+                            "explanation": "-u برای سرویس خاص"
+                        },
+                        {
+                            "title": "لاگ زنده",
+                            "code": "journalctl -u nginx -f",
+                            "output": "",
+                            "explanation": "-f مثل tail -f لاگ‌های جدید را نشان می‌دهد"
+                        },
+                        {
+                            "title": "از زمان خاص",
+                            "code": "journalctl --since '1 hour ago'",
+                            "output": "",
+                            "explanation": "لاگ‌های یک ساعت اخیر"
+                        }
+                    ],
+                    "tip": "journalctl -xe برای آخرین خطاها با توضیحات"
+                }
+            ]
+        },
+        {
+            "id": "compression",
+            "title": "فشرده‌سازی",
+            "icon": "fa-file-archive",
+            "color": "from-lime-500 to-green-500",
+            "description": "فشرده‌سازی و استخراج فایل‌ها",
+            "commands": [
+                {
+                    "command": "tar",
+                    "description": "آرشیو و فشرده‌سازی فایل‌ها",
+                    "examples": [
+                        {
+                            "title": "ایجاد tar.gz",
+                            "code": "tar -czvf archive.tar.gz folder/",
+                            "output": "folder/\nfolder/file1.txt\nfolder/file2.txt",
+                            "explanation": "c=create, z=gzip, v=verbose, f=file"
+                        },
+                        {
+                            "title": "استخراج tar.gz",
+                            "code": "tar -xzvf archive.tar.gz",
+                            "output": "folder/\nfolder/file1.txt\nfolder/file2.txt",
+                            "explanation": "x=extract"
+                        },
+                        {
+                            "title": "استخراج به پوشه خاص",
+                            "code": "tar -xzvf archive.tar.gz -C /destination/",
+                            "output": "",
+                            "explanation": "-C مسیر مقصد"
+                        },
+                        {
+                            "title": "لیست محتویات",
+                            "code": "tar -tzvf archive.tar.gz",
+                            "output": "-rw-r--r-- user/group 1024 2024-01-25 file1.txt\n-rw-r--r-- user/group 2048 2024-01-25 file2.txt",
+                            "explanation": "t=list بدون استخراج"
+                        }
+                    ],
+                    "tip": "برای bzip2 از -j و برای xz از -J استفاده کنید"
+                },
+                {
+                    "command": "zip/unzip",
+                    "description": "فشرده‌سازی فرمت ZIP",
+                    "examples": [
+                        {
+                            "title": "ایجاد zip",
+                            "code": "zip -r archive.zip folder/",
+                            "output": "  adding: folder/ (stored 0%)\n  adding: folder/file1.txt (deflated 60%)",
+                            "explanation": "-r برای پوشه (recursive)"
+                        },
+                        {
+                            "title": "استخراج zip",
+                            "code": "unzip archive.zip",
+                            "output": "Archive:  archive.zip\n   creating: folder/\n  inflating: folder/file1.txt",
+                            "explanation": "استخراج در مسیر فعلی"
+                        },
+                        {
+                            "title": "به پوشه خاص",
+                            "code": "unzip archive.zip -d /destination/",
+                            "output": "",
+                            "explanation": "-d مسیر مقصد"
+                        },
+                        {
+                            "title": "لیست محتویات",
+                            "code": "unzip -l archive.zip",
+                            "output": "Archive:  archive.zip\n  Length      Date    Time    Name\n---------  ---------- -----   ----\n     1024  2024-01-25 10:00   file1.txt",
+                            "explanation": "-l فقط لیست نمایش می‌دهد"
+                        }
+                    ],
+                    "tip": "zip با پسورد: zip -e archive.zip files"
+                }
+            ]
+        },
+        {
+            "id": "shortcuts",
+            "title": "میانبرهای ترمینال",
+            "icon": "fa-keyboard",
+            "color": "from-fuchsia-500 to-pink-500",
+            "description": "کلیدهای میانبر کاربردی",
+            "commands": [
+                {
+                    "command": "Ctrl + C",
+                    "description": "لغو دستور در حال اجرا",
+                    "examples": [
+                        {
+                            "title": "توقف دستور",
+                            "code": "ping google.com\n^C",
+                            "output": "--- google.com ping statistics ---\n5 packets transmitted, 5 received",
+                            "explanation": "ارسال SIGINT برای توقف"
+                        }
+                    ],
+                    "tip": "برای پروسه‌هایی که با Ctrl+C متوقف نمی‌شوند از kill استفاده کنید"
+                },
+                {
+                    "command": "Ctrl + Z",
+                    "description": "معلق کردن پروسه فعلی",
+                    "examples": [
+                        {
+                            "title": "معلق کردن",
+                            "code": "vim file.txt\n^Z",
+                            "output": "[1]+  Stopped                 vim file.txt",
+                            "explanation": "پروسه متوقف می‌شود اما از بین نمی‌رود"
+                        },
+                        {
+                            "title": "ادامه در پس‌زمینه",
+                            "code": "bg",
+                            "output": "[1]+ vim file.txt &",
+                            "explanation": "ادامه اجرا در background"
+                        },
+                        {
+                            "title": "برگشت به پیش‌زمینه",
+                            "code": "fg",
+                            "output": "vim file.txt",
+                            "explanation": "برگرداندن به foreground"
+                        }
+                    ],
+                    "tip": "با jobs لیست پروسه‌های معلق را ببینید"
+                },
+                {
+                    "command": "Ctrl + R",
+                    "description": "جستجو در تاریخچه دستورات",
+                    "examples": [
+                        {
+                            "title": "جستجوی تاریخچه",
+                            "code": "(reverse-i-search)`ssh': ssh user@server.com",
+                            "output": "",
+                            "explanation": "تایپ کنید و دستورات قبلی را پیدا کنید"
+                        }
+                    ],
+                    "tip": "Ctrl+R مجدد برای نتیجه بعدی، Enter برای اجرا"
+                },
+                {
+                    "command": "Tab",
+                    "description": "تکمیل خودکار",
+                    "examples": [
+                        {
+                            "title": "تکمیل مسیر",
+                            "code": "cd /etc/ng[TAB]",
+                            "output": "cd /etc/nginx/",
+                            "explanation": "تکمیل خودکار نام فایل/پوشه"
+                        },
+                        {
+                            "title": "لیست گزینه‌ها",
+                            "code": "cd /etc/[TAB][TAB]",
+                            "output": "apache2/  nginx/  mysql/  ssh/",
+                            "explanation": "دوبار Tab لیست همه گزینه‌ها"
+                        }
+                    ],
+                    "tip": "صرفه‌جویی در وقت و جلوگیری از اشتباه تایپی"
+                },
+                {
+                    "command": "!!",
+                    "description": "اجرای مجدد دستور قبلی",
+                    "examples": [
+                        {
+                            "title": "تکرار دستور",
+                            "code": "apt update\nsudo !!",
+                            "output": "sudo apt update\n[sudo] password for user:",
+                            "explanation": "اجرای مجدد با sudo"
+                        }
+                    ],
+                    "tip": "!$ آخرین آرگومان دستور قبلی"
+                }
+            ]
+        }
+    ]
+};
+
+// ===== Application Code =====
+class LinuxWorkshop {
+    constructor(data) {
+        this.data = data;
+        this.filteredData = data.categories;
+        this.currentView = 'list';
+        this.isDarkTheme = true;
+        this.init();
+    }
+
+    init() {
+        this.renderCategories();
+        this.renderContent();
+        this.setupEventListeners();
+        this.updateStats();
+        this.setupKeyboardShortcuts();
+        this.loadTheme();
+    }
+
+    loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            this.isDarkTheme = false;
+            document.body.classList.add('light-theme');
+        }
+    }
+
+    toggleTheme() {
+        this.isDarkTheme = !this.isDarkTheme;
+        document.body.classList.toggle('light-theme');
+        localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
+    }
+
+    renderCategories() {
+        const nav = document.getElementById('categoryNav');
+        nav.innerHTML = this.data.categories.map((cat, index) => `
+            <button class="category-btn w-full flex items-center gap-3 p-3 rounded-xl transition-all group text-right"
+                    onclick="app.scrollToCategory('${cat.id}')"
+                    style="animation-delay: ${index * 50}ms; background-color: var(--bg-tertiary);"
+                    onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                <div class="category-icon w-10 h-10 bg-gradient-to-br ${cat.color} rounded-lg flex items-center justify-center shadow-lg">
+                    <i class="fas ${cat.icon} text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="font-medium">${cat.title}</div>
+                    <div class="text-xs" style="color: var(--text-secondary);">${cat.commands.length} دستور</div>
+                </div>
+            </button>
+        `).join('');
+    }
+
+    renderContent() {
+        const container = document.getElementById('contentContainer');
+        container.innerHTML = this.filteredData.map((cat, catIndex) => `
+            <section id="${cat.id}" class="mb-12 animate-fadeInUp" style="animation-delay: ${catIndex * 100}ms">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br ${cat.color} rounded-2xl flex items-center justify-center shadow-xl">
+                        <i class="fas ${cat.icon} text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold">${cat.title}</h2>
+                        <p style="color: var(--text-secondary);">${cat.description}</p>
+                    </div>
+                    <div class="mr-auto px-4 py-2 rounded-full text-sm" style="background-color: var(--bg-tertiary); color: var(--text-secondary);">
+                        ${cat.commands.length} دستور
+                    </div>
+                </div>
+                
+                <div class="grid gap-6">
+                    ${cat.commands.map((cmd, cmdIndex) => this.renderCommand(cmd, cat.color, cmdIndex)).join('')}
+                </div>
+            </section>
+        `).join('');
+    }
+
+    renderCommand(cmd, color, index) {
+        const examplesHtml = cmd.examples ? cmd.examples.map((ex, i) => `
+            <div class="example-block mt-4 rounded-xl overflow-hidden border" style="border-color: var(--border-color);">
+                <div class="flex items-center justify-between px-4 py-2" style="background-color: var(--bg-tertiary);">
+                    <span class="font-medium text-sm flex items-center gap-2">
+                        <i class="fas fa-code text-indigo-400"></i>
+                        ${ex.title}
+                    </span>
+                    <button onclick="app.copyCommand('${ex.code.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')" 
+                            class="p-2 rounded-lg transition-all hover:bg-gray-600/30"
+                            title="کپی">
+                        <i class="fas fa-copy text-sm" style="color: var(--text-secondary);"></i>
+                    </button>
+                </div>
+                
+                <!-- Command Input -->
+                <div class="terminal">
+                    <div class="p-4 flex items-start gap-3">
+                        <span class="text-emerald-400 font-mono select-none">$</span>
+                        <code class="code-block flex-1 text-emerald-300">${ex.code.replace(/\n/g, '<br><span class="text-emerald-400">$</span> ')}</code>
+                    </div>
+                </div>
+                
+                <!-- Command Output -->
+                ${ex.output ? `
+                <div class="terminal border-t" style="border-color: var(--border-color);">
+                    <div class="px-4 py-2 text-xs" style="color: var(--text-secondary);">
+                        <i class="fas fa-terminal ml-1"></i> خروجی:
+                    </div>
+                    <div class="p-4 pt-0">
+                        <pre class="code-block text-sm text-gray-300 whitespace-pre-wrap">${ex.output}</pre>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <!-- Explanation -->
+                <div class="p-4 border-t" style="border-color: var(--border-color); background-color: var(--bg-tertiary);">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-info-circle text-blue-400 mt-1"></i>
+                        <p class="text-sm" style="color: var(--text-secondary);">${ex.explanation}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('') : '';
+
+        const tipHtml = cmd.tip ? `
+            <div class="flex items-start gap-2 mt-4 p-4 rounded-xl" style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2);">
+                <i class="fas fa-lightbulb text-amber-400 mt-0.5"></i>
+                <span class="text-amber-300 text-sm">${cmd.tip}</span>
+            </div>
+        ` : '';
+
+        return `
+            <div class="command-card rounded-2xl p-6 card-hover border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+                            <span class="code-block px-3 py-1 rounded-lg text-indigo-400" style="background-color: var(--bg-tertiary);">${cmd.command}</span>
+                        </h3>
+                        <p style="color: var(--text-secondary);">${cmd.description}</p>
+                    </div>
+                    <button onclick="app.copyCommand('${cmd.command.replace(/'/g, "\\'")}')" 
+                            class="copy-btn p-3 rounded-xl transition-all"
+                            style="background-color: var(--bg-tertiary);"
+                            title="کپی دستور">
+                        <i class="fas fa-copy" style="color: var(--text-secondary);"></i>
+                    </button>
+                </div>
+                
+                ${examplesHtml}
+                ${tipHtml}
+            </div>
+        `;
+    }
+
+    renderTreeView() {
+        const container = document.getElementById('treeViewContainer');
+        container.innerHTML = `
+            <div class="rounded-2xl p-6 border tree-view" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-sitemap text-indigo-400"></i>
+                    <span class="mr-2">نمای درختی دستورات</span>
+                </h3>
+                <div class="space-y-2">
+                    ${this.data.categories.map(cat => `
+                        <div class="tree-category">
+                            <div class="flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700/30" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                <i class="fas fa-chevron-down text-xs text-indigo-400 transition-transform"></i>
+                                <div class="w-8 h-8 bg-gradient-to-br ${cat.color} rounded-lg flex items-center justify-center">
+                                    <i class="fas ${cat.icon} text-white text-sm"></i>
+                                </div>
+                                <span class="font-medium">${cat.title}</span>
+                                <span class="text-xs px-2 py-1 rounded-full" style="background-color: var(--bg-tertiary); color: var(--text-secondary);">${cat.commands.length}</span>
+                            </div>
+                            <div class="tree-line mr-4 space-y-1 mt-1">
+                                ${cat.commands.map(cmd => `
+                                    <div class="tree-node py-1">
+                                        <div class="flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700/30" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                            <i class="fas fa-chevron-left text-xs" style="color: var(--text-secondary);"></i>
+                                            <code class="code-block text-sm text-emerald-400">${cmd.command}</code>
+                                            <span class="text-xs" style="color: var(--text-secondary);">- ${cmd.description.substring(0, 30)}...</span>
+                                        </div>
+                                        <div class="tree-line mr-4 space-y-1 mt-1 hidden">
+                                            ${cmd.examples ? cmd.examples.map(ex => `
+                                                <div class="tree-node py-1 flex items-center gap-2">
+                                                    <i class="fas fa-terminal text-xs text-cyan-400"></i>
+                                                    <code class="code-block text-xs" style="color: var(--text-secondary);">${ex.code.split('\n')[0]}</code>
+                                                </div>
+                                            `).join('') : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    switchView(view) {
+        this.currentView = view;
+        const listBtn = document.getElementById('listViewBtn');
+        const treeBtn = document.getElementById('treeViewBtn');
+        const listContainer = document.getElementById('contentContainer');
+        const treeContainer = document.getElementById('treeViewContainer');
+
+        if (view === 'list') {
+            listBtn.classList.add('tab-active');
+            listBtn.style.backgroundColor = '';
+            treeBtn.classList.remove('tab-active');
+            treeBtn.style.backgroundColor = 'var(--bg-tertiary)';
+            listContainer.classList.remove('hidden');
+            treeContainer.classList.add('hidden');
+        } else {
+            treeBtn.classList.add('tab-active');
+            treeBtn.style.backgroundColor = '';
+            listBtn.classList.remove('tab-active');
+            listBtn.style.backgroundColor = 'var(--bg-tertiary)';
+            listContainer.classList.add('hidden');
+            treeContainer.classList.remove('hidden');
+            this.renderTreeView();
+        }
+    }
+
+    copyCommand(command) {
+        const cleanCommand = command.replace(/\\n/g, '\n');
+        navigator.clipboard.writeText(cleanCommand).then(() => {
+            this.showToast();
+        });
+    }
+
+    showToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        
+        setTimeout(() => {
+            toast.classList.add('translate-y-20', 'opacity-0');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 2000);
+    }
+
+    scrollToCategory(id) {
+        this.switchView('list');
+        setTimeout(() => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+        document.getElementById('sidebar').classList.add('translate-x-full');
+    }
+
+    search(query) {
+        if (!query.trim()) {
+            this.filteredData = this.data.categories;
+            this.renderContent();
+            this.updateStats();
+            return;
+        }
+
+        const lowerQuery = query.toLowerCase();
+        this.filteredData = this.data.categories.map(cat => {
+            const filteredCommands = cat.commands.filter(cmd => 
+                cmd.command.toLowerCase().includes(lowerQuery) ||
+                cmd.description.includes(query) ||
+                (cmd.tip && cmd.tip.includes(query)) ||
+                (cmd.examples && cmd.examples.some(ex => 
+                    ex.code.toLowerCase().includes(lowerQuery) ||
+                    ex.explanation.includes(query)
+                ))
+            );
+            return { ...cat, commands: filteredCommands };
+        }).filter(cat => cat.commands.length > 0);
+
+        this.renderContent();
+        
+        const totalCmds = this.filteredData.reduce((sum, cat) => sum + cat.commands.length, 0);
+        document.getElementById('totalCommands').textContent = totalCmds;
+        document.getElementById('totalCategories').textContent = this.filteredData.length;
+    }
+
+    updateStats() {
+        const totalCommands = this.data.categories.reduce((sum, cat) => sum + cat.commands.length, 0);
+        document.getElementById('totalCommands').textContent = totalCommands;
+        document.getElementById('totalCategories').textContent = this.data.categories.length;
+    }
+
+    setupEventListeners() {
+        // Theme toggle
+        document.getElementById('themeSwitch').addEventListener('click', () => {
+            this.toggleTheme();
+        });
+
+        // View toggle
+        document.getElementById('listViewBtn').addEventListener('click', () => {
+            this.switchView('list');
+        });
+        document.getElementById('treeViewBtn').addEventListener('click', () => {
+            this.switchView('tree');
+        });
+
+        // Search
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => this.search(e.target.value), 300);
+        });
+
+        // Mobile menu
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('translate-x-full');
+        });
+
+        // Close sidebar on outside click
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                sidebar.classList.add('translate-x-full');
+            }
+        });
+
+        // Scroll to top
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTopBtn.classList.remove('hidden');
+                scrollTopBtn.classList.add('flex');
+            } else {
+                scrollTopBtn.classList.add('hidden');
+                scrollTopBtn.classList.remove('flex');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            if (e.key === 'Escape') {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.value = '';
+                this.search('');
+                searchInput.blur();
+            }
+        });
+    }
+}
+
+// Initialize
+const app = new LinuxWorkshop(courseData);
+document.documentElement.style.scrollBehavior = 'smooth';
+</script>
+</body>
+</html>
